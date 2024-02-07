@@ -13,7 +13,7 @@ import java.util.Locale;
  * Clase que controla las operaciones relacionadas con la entidad "Region" en la base de datos.
  */
 public class RegionController {
-    private Connection connection; // Conexión a la base de datos.
+    private Connection connection;
 
     /**
      * Constructor de la clase RegionController.

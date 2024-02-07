@@ -6,22 +6,16 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionFactory {
-	// init database constants
 	private static final String DATABASE_DRIVER = "org.postgresql.Driver";
-
 	private static final String MAX_POOL = "250";
 	private static ConnectionFactory instance;
-
 	private String dbname;
 	private String host;
 	private String port;
 	private String user;
 	private String password;
 	private String schema;
-	
-	// init connection object
 	private Connection connection;
-	// init properties object
 	private Properties properties;
 
 	private ConnectionFactory() {

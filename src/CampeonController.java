@@ -37,9 +37,20 @@ public class CampeonController {
         String nombreCampeon = br.readLine();
         nombreCampeon = nombreCampeon.toUpperCase(Locale.ROOT);
 
-        System.out.println("Inserta el nombre de la región: ");
-        String nombreRegion = br.readLine();
-        nombreRegion = nombreRegion.toUpperCase(Locale.ROOT);
+        String nombreRegion = "";
+        boolean regionValida = false;
+
+        while (!regionValida) {
+            System.out.println("Inserta el nombre de la región: ");
+            nombreRegion = br.readLine();
+            nombreRegion = nombreRegion.toUpperCase(Locale.ROOT);
+
+            if (!existeRegion(nombreRegion)) {
+                System.out.println("La región ingresada no existe. Por favor, ingresa un nombre de región válido.");
+            } else {
+                regionValida = true;
+            }
+        }
 
         int regionId = obtenerIdRegionPorNombre(nombreRegion);
 
@@ -96,6 +107,30 @@ public class CampeonController {
                 System.out.println("No se pudo insertar el campeón.");
             }
         }
+    }
+
+    /**
+     * Comprueba si existe una región en la base de datos con el nombre especificado.
+     *
+     * @param nombreRegion El nombre de la región a verificar.
+     * @return true si la región existe en la base de datos, false si no.
+     * @throws SQLException Si ocurre un error al ejecutar la consulta SQL.
+     */
+    private boolean existeRegion(String nombreRegion) throws SQLException {
+        String sql = "SELECT COUNT(*) AS count FROM Region WHERE nombre = ?";
+
+        try (PreparedStatement pst = connection.prepareStatement(sql)) {
+            pst.setString(1, nombreRegion);
+
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt("count");
+                    return count > 0;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -560,11 +595,25 @@ public class CampeonController {
                 obtenerNuevoValor(br, "Introduzca la nueva raza: ") :
                 razaActual;
 
-        System.out.print("¿Desea cambiar la región? (Si/No): ");
-        String cambiarRegion = br.readLine();
-        String nuevaRegion = (cambiarRegion.equalsIgnoreCase("si")) ?
-                obtenerNuevoValor(br, "Introduzca la nueva región: ") :
-                regionActual;
+        String nuevaRegion = regionActual;
+        boolean nombreRegionValido = false;
+
+        while (!nombreRegionValido) {
+            System.out.print("¿Desea cambiar la región? (Si/No): ");
+            String cambiarRegion = br.readLine();
+
+            if (cambiarRegion.equalsIgnoreCase("si")) {
+                nuevaRegion = obtenerNuevoValor(br, "Introduzca la nueva región: ");
+                if (existeRegion(nuevaRegion)) {
+                    nombreRegionValido = true;
+                } else {
+                    System.out.println("La región ingresada no existe. Por favor, ingrese un nombre de región válido.");
+                }
+            } else {
+                nombreRegionValido = true; // No se desea cambiar la región, salir del bucle
+            }
+        }
+
 
         int nuevaRegionId = obtenerIdDeRegionPorNombre(nuevaRegion);
 

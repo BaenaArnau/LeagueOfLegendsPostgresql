@@ -35,9 +35,7 @@ public class HabilidadController {
     public void addHabilidad() throws SQLException, IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        System.out.println("Inserta el nombre del campeón: ");
-        String campeon = br.readLine();
-        campeon = campeon.toUpperCase(Locale.ROOT);
+        String campeon = obtenerNombreCampeonValido(br);
 
         System.out.println("Inserta el nombre de la habilidad: ");
         String nombre = br.readLine();
@@ -77,6 +75,59 @@ public class HabilidadController {
             }
         }
     }
+
+    /**
+     * Solicita al usuario que ingrese el nombre de un campeón y verifica si el nombre ingresado es válido,
+     * es decir, si existe en la base de datos de campeones.
+     *
+     * @param br BufferedReader para leer la entrada del usuario.
+     * @return El nombre válido del campeón.
+     * @throws IOException  Si ocurre un error de entrada/salida.
+     * @throws SQLException Si ocurre un error de SQL al verificar la existencia del campeón.
+     */
+    private String obtenerNombreCampeonValido(BufferedReader br) throws IOException, SQLException {
+        String nombreCampeon = "";
+        boolean nombreCampeonValido = false;
+
+        while (!nombreCampeonValido) {
+            System.out.println("Inserta el nombre del campeón: ");
+            nombreCampeon = br.readLine();
+            nombreCampeon = nombreCampeon.toUpperCase(Locale.ROOT);
+
+            if (existeCampeon(nombreCampeon)) {
+                nombreCampeonValido = true;
+            } else {
+                System.out.println("El nombre del campeón ingresado no existe. Por favor, ingrese un nombre de campeón válido.");
+            }
+        }
+
+        return nombreCampeon;
+    }
+
+    /**
+     * Verifica si un campeón con el nombre especificado existe en la base de datos.
+     *
+     * @param nombreCampeon El nombre del campeón a verificar.
+     * @return true si el campeón existe, false en caso contrario.
+     * @throws SQLException Si ocurre un error de SQL al ejecutar la consulta.
+     */
+    private boolean existeCampeon(String nombreCampeon) throws SQLException {
+        String sql = "SELECT COUNT(*) AS count FROM Campeon WHERE nombre = ?";
+
+        try (PreparedStatement pst = connection.prepareStatement(sql)) {
+            pst.setString(1, nombreCampeon);
+
+            try (ResultSet rs = pst.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt("count");
+                    return count > 0;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
     /**
      * Método privado para obtener el ID de un campeón por su nombre.
@@ -399,12 +450,20 @@ public class HabilidadController {
 
         System.out.print("¿Desea cambiar el campeón? (Si/No): ");
         String cambiarCampeon = br.readLine();
-        String nuevoCampeon;
+        String nuevoCampeon = "";
         int nuevoCampeonId = campeonIdActual;
+        boolean validador = false;
 
         if (cambiarCampeon.equalsIgnoreCase("si")) {
-            nuevoCampeon = obtenerNuevoValor(br, "Introduzca el nuevo campeón: ");
-            nuevoCampeonId = obtenerIdCampeonPorNombre(nuevoCampeon);
+            while (!validador){
+                nuevoCampeon = obtenerNuevoValor(br, "Introduzca el nuevo campeón: ");
+                if (existeCampeon(nuevoCampeon)){
+                    nuevoCampeonId = obtenerIdCampeonPorNombre(nuevoCampeon);
+                    validador = true;
+                }else {
+                    System.out.println("Introduzca un campeon valido");
+                }
+            }
         } else {
             nuevoCampeon = campeonActual;
         }

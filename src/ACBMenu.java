@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
  * Clase que representa un menú para interactuar con el sistema.
  */
 public class ACBMenu {
-	private int option; // Variable para almacenar la opción seleccionada en el menú.
+	private int option;
 
 	/**
 	 * Constructor de la clase ACBMenu.

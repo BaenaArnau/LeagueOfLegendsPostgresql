@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.ParseException;
 
-
 /**
  * Clase principal que contiene el método main para ejecutar la aplicación del Catálogo de Campeones y Habilidades (ACB).
  */
