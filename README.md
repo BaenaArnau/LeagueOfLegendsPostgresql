@@ -54,4 +54,4 @@ Este proyecto fue desarrollado por Arnau Baena Perez.
 
 ## Agradecimientos
 
-Agradecemos a OpenCSV y PostgreSQL por proporcionar herramientas útiles para el desarrollo de este proyecto.
+Agradecemos a OpenCSV, PostgreSQL y ChatGPT por proporcionar herramientas útiles para el desarrollo de este proyecto.
